@@ -1,0 +1,79 @@
+﻿@using Entities.Dtos
+@model UserForLoginDto
+
+<form method="post" asp-controller="Security" asp-action="Login">
+    <!-- Email input -->
+    <div class="form-outline mb-4">
+        <input type="email" asp-for="Email" class="form-control" placeholder="E-mail Adress" />
+    </div>
+
+    <!-- Password input -->
+    <div class="form-outline mb-4">
+        <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
+    </div>
+
+    <!-- 2 column grid layout for inline styling -->
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-center">
+            <!-- Checkbox -->
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
+                <label class="form-check-label" for="form2Example31"> Remember me </label>
+            </div>
+        </div>
+
+        <div class="col">
+            <!-- Simple link -->
+            <a href="#!">Forgot password?</a>
+        </div>
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-taze btn-block mb-4">Sign in</button>
+
+    <!-- Register buttons -->
+    <div class="text-center">
+        <p>Not a member? <a href="#!">Register</a></p>
+        <p>or sign up with:</p>
+        <button type="button" class="btn btn-link btn-floating mx-1">
+            <i class="fa fa-facebook-f"></i>
+        </button>
+
+        <button type="button" class="btn btn-link btn-floating mx-1">
+            <i class="fa fa-google"></i>
+        </button>
+
+        <button type="button" class="btn btn-link btn-floating mx-1">
+            <i class="fa fa-twitter"></i>
+        </button>
+
+        <button type="button" class="btn btn-link btn-floating mx-1">
+            <i class="fa fa-github"></i>
+        </button>
+    </div>
+</form>
+
+<script>
+    $("form").submit(function (e) {
+        event.preventDefault();
+
+        let data = $(this).serialize();
+
+        $.ajax({
+            url: "/Security/Login",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                if (response.success) {
+                    window.location = "/Home/Index";
+                }
+                else {
+                    alert(response.message);
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+        });
+    });
+</script>

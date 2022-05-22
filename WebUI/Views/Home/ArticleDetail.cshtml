@@ -1,0 +1,98 @@
+﻿@using Entities.Dtos
+@model ArticleDetailDto
+
+
+
+<div class="jumbotron border p-3 mb-3 rounded">
+    <h2>@Model.Article.Title</h2>
+    <p>@Model.Article.Contents</p>
+</div>
+
+<div>
+    @foreach (var item in Model.Categories)
+    {
+        <span class="badge badge-secondary p-1">@item.Name</span>
+    }
+</div>
+
+<div class="dropdown-divider"></div>
+
+<div class="footer-area">
+    <div class="comment-area pt-2 pb-2 input-group">
+        <textarea id="content-input" class="form-control addtxt" placeholder="+ Yorum yap" rows="3"></textarea>
+        <div class="input-group-append">
+            <button id="btn-send-comment" class="btn btn-taze" onclick="AddComment()" disabled>Gönder</button>
+        </div>
+    </div>
+
+    @foreach (var item in Model.Comments.OrderByDescending(x => x.CDate))
+    {
+        <div class="py-2">
+            <div class="second py-2 px-2 shadow ">
+                <span class="text1">@item.Contents</span>
+                <div class="d-flex justify-content-between py-1 pt-2">
+                    <div>
+                        <img src="https://i.imgur.com/AgAC1Is.jpg" width="18"><span class="text2">Martha</span>
+                    </div>
+                    <div>
+                        <span class="thumbup">
+                            <i class="fa fa-thumbs-o-up"></i>
+                        </span><span class="text4">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@Html.AntiForgeryToken()
+<input type="hidden" id="article-id" value="@Model.Article.Id" />
+
+<script>
+
+    $("#content-input").keyup(function () {
+        if ($(this).val().length > 0) {
+            $("#btn-send-comment").removeAttr("disabled");
+        }
+        else {
+            $("#btn-send-comment").attr("disabled", "disabled");
+        }
+    });
+
+    function AddComment() {
+        let content = $("#content-input").val();
+        if (content.length > -1) {
+
+            let token = $("input[name=__RequestVerificationToken]").val();
+            let articleId = $("#article-id").val();
+
+            $.ajax({
+                url: "/Home/AddComment",
+                type: "POST",
+                data: { __RequestVerificationToken: token, articleId: articleId, content: content },
+                success: function (response) {
+                    if (response.success) {
+                        $(".footer-area .comment-area").after('<div class="py-2">' +
+                            '<div class="second py-2 px-2 shadow ">' +
+                            '<span class="text1">' + content + '</span>' +
+                            '<div class="d-flex justify-content-between py-1 pt-2">' +
+                            '<div><img src="https://i.imgur.com/AgAC1Is.jpg" width="18"><span class="text2">Martha</span></div>' +
+                            '<div>' +
+                            '<span class="thumbup"><i class="fa fa-thumbs-o-up"></i></span><span class="text4">0</span>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>');
+                        $("#content-input").val("");
+                    }
+                    else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    }
+</script>

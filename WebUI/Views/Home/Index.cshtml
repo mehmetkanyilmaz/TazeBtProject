@@ -1,0 +1,111 @@
+﻿@using Entities.Dtos
+@model List<ArticleDetailDto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="d-flex mb-2 shadow-lg border rounded p-2">
+    <div class="form-group mr-1">
+        <small class="form-label form-text text-primary">*Min 3 Lenghth</small>
+        <input class="form-control form-control-sm " id="article-input" placeholder="Article Title" />
+    </div>
+    <div class="form-group mr-1">
+        <small class="form-label form-text text-primary">*Min 2 Lenghth</small>
+        <input class="form-control form-control-sm" id="category-input" placeholder="Category" />
+    </div>
+    <a class="btn btn-taze ml-auto  my-auto h-25" href="/Home/AddArticle"><i class="fa fa-plus"></i> Yeni Oluştur</a>
+</div>
+
+<div id="article-list">
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <a href="/ArticleDetail/@item.Article.Id" class="list-group-item list-group-item-action mb-2 rounded article-item shadow-lg">
+                <img src="~/images/user-icon.png" class="img-user d-inline" />
+
+                <label class="font-weight-bold">@item.Article.Title</label>
+
+                <div class="info-range">
+                    <small class="d-block small-2x text-right">@(item.UserName + " " + item.UserSurname )</small>
+                    <span class="badge badge-primary badge-pill"><i class="fa fa-comments"></i> @item.Comments.Count()</span>
+                    <small class="text-success"><i class="fa fa-calendar"></i> @item.Article.Date.ToString("dd.MM.yyyy")</small>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<script>
+    $("#article-input").keyup(function () {
+        let title = $(this).val();
+        let token = $("input[name=__RequestVerificationToken]").val();
+
+        if (title.length > 2) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/ArticleListGetByTitle",
+                data: { __RequestVerificationToken: token, title: title },
+                success: function (response) {
+                    $("#article-list").html(response);
+                },
+                error: function (xhr) {
+                    alert("Bir hata oluştu!");
+                }
+            });
+
+        }
+        else if (title.length == 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/ArticleListGetAll",
+                data: { __RequestVerificationToken: token },
+                success: function (response) {
+                    $("#article-list").html(response);
+                },
+                error: function (xhr) {
+                    alert("Bir hata oluştu!");
+                }
+            });
+
+        }
+    });
+
+    $("#category-input").keyup(function () {
+        let category = $(this).val();
+        let token = $("input[name=__RequestVerificationToken]").val();
+
+        if (category.length > 1) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/ArticleListGetByCategory",
+                data: { __RequestVerificationToken: token, category: category },
+                success: function (response) {
+                    $("#article-list").html(response);
+                },
+                error: function (xhr) {
+                    alert("Bir hata oluştu!");
+                }
+            });
+
+        }
+        else if (category.length == 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/ArticleListGetAll",
+                data: { __RequestVerificationToken: token },
+                success: function (response) {
+                    $("#article-list").html(response);
+                },
+                error: function (xhr) {
+                    alert("Bir hata oluştu!");
+                }
+            });
+
+        }
+    });
+</script>

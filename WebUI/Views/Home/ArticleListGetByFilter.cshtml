@@ -1,0 +1,31 @@
+﻿@using Entities.Dtos
+@model List<ArticleDetailDto>
+@{
+    Layout = null;
+}
+
+@if (Model.Count() > 0)
+{
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <a href="/ArticleDetail/@item.Article.Id" class="list-group-item list-group-item-action mb-2 rounded article-item shadow-lg">
+                <img src="~/images/user-icon.png" class="img-user d-inline" />
+
+                <label class="font-weight-bold">@item.Article.Title</label>
+
+                <div class="info-range">
+                    <small class="d-block small-2x text-right">@(item.UserName + " " + item.UserSurname )</small>
+                    <span class="badge badge-primary badge-pill"><i class="fa fa-comments"></i> @item.Comments.Count()</span>
+                    <small class="text-success"><i class="fa fa-calendar"></i> @item.Article.Date.ToString("dd.MM.yyyy")</small>
+                </div>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-success shadow" role="alert">
+        Kriterlere uygun veri bulunamadı!
+    </div>
+}

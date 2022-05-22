@@ -1,0 +1,53 @@
+﻿@using WebUI.Models
+@model AddArticleViewModel
+
+<form class="form-row" method="post" asp-antiforgery="true">
+    <div class="form-outline mb-4 col-6">
+        <input asp-for="Title" class="form-control txtTitle" placeholder="Başlık" />
+    </div>
+
+    <div class="form-outline mb-4 col-6">
+        <input asp-for="Categories" class="form-control" placeholder="KATEGORİ1, KATEGORİ2, KATEGORİ3" />
+    </div>
+
+    <div class="form-outline mb-4 col-12">
+        <textarea asp-for="Contents" class="form-control txtContents" rows="5" placeholder="İçerik"></textarea>
+    </div>
+
+    <button id="btn-save-article" type="submit" class="btn btn-taze btn-block" disabled><i class="fa fa-save"></i> Kaydet</button>
+</form>
+
+<script>
+
+    $(".txtTitle,.txtContents").keyup(function () {
+        if ($(".txtTitle").val().length > 0 && $(".txtContents").val().length > 0) {
+            $("#btn-save-article").removeAttr("disabled");
+        }
+        else {
+            $("#btn-save-article").attr("disabled", "disabled");
+        }
+    });
+
+    $("form").submit(function (e) {
+        event.preventDefault();
+
+        let data = $(this).serialize();
+
+        $.ajax({
+            url: "/Home/AddArticle",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                if (response.success) {
+                    window.location = "/ArticleDetail/" + response.message;
+                }
+                else {
+                    alert(response.message);
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+</script>
